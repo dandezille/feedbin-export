@@ -1,1 +1,7 @@
+# Code formatting
 black
+isort
+
+# Features
+requests
+python-dotenv
