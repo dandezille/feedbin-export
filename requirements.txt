@@ -5,3 +5,4 @@ isort
 # Features
 requests
 python-dotenv
+todoist-python
