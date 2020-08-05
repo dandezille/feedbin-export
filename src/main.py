@@ -1,10 +1,11 @@
 import json
-import os
 import sys
+from pprint import pp
 
-import requests
 from dotenv import load_dotenv
 from todoist.api import TodoistAPI
+
+import feedbin_api as feedbin
 
 
 def fail(msg):
@@ -12,45 +13,25 @@ def fail(msg):
     exit(1)
 
 
-def feedbin(path, params=None):
-    base_url = "https://api.feedbin.com/v2/"
-    credentials = requests.auth.HTTPBasicAuth(
-        os.getenv("FEEDBIN_USER"), os.getenv("FEEDBIN_PASSWORD")
-    )
-
-    return requests.get(base_url + path, auth=credentials, params=params)
-
-
-def feedbin_delete(path, data):
-    base_url = "https://api.feedbin.com/v2/"
-    credentials = requests.auth.HTTPBasicAuth(
-        os.getenv("FEEDBIN_USER"), os.getenv("FEEDBIN_PASSWORD")
-    )
-    headers = {"content-type": "application/json"}
-
-    return requests.delete(
-        base_url + path, auth=credentials, headers=headers, data=data
-    )
-
-
 if __name__ == "__main__":
+    print("Loading environment")
     load_dotenv()
 
-    if not feedbin("authentication.json").status_code == 200:
+    print("Authenticating")
+    if not feedbin.check_authenticated():
         fail("Failed to authenticate")
 
-    starred_ids = feedbin("starred_entries.json").json()
-    print(starred_ids)
+    print("Fetching starred entries")
+    starred_ids = feedbin.get_starred_entries()
+    print("Received starred entries:")
+    pp(starred_ids)
 
-    entries_list = ",".join([str(id) for id in starred_ids])
-    entries_params = {"ids": entries_list}
+    print("Fetching entry urls")
+    entry_urls = feedbin.get_entry_urls(starred_ids)
+    print("Received urls:")
+    pp(entry_urls)
 
-    entry_details = feedbin("entries.json", params=entries_params)
-    print(entry_details)
-    print(entry_details.request.url)
-
-    urls = [(entry["id"], entry["url"]) for entry in entry_details.json()]
-    print(urls)
+    exit(0)
 
     todoist = TodoistAPI("cf137683c65c146b2d358fc95c28a73270540e95")
     todoist.sync()
