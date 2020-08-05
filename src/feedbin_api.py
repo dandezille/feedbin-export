@@ -1,4 +1,5 @@
 import os
+import json
 
 import requests
 
@@ -40,3 +41,7 @@ def get_entry_urls(entries):
     response = _get("entries.json", params=entries_params)
 
     return {entry["id"]: entry["url"] for entry in response.json()}
+
+def remove_starred_entries(entries):
+    return _delete(
+        "starred_entries.json", data=json.dumps({"starred_entries": entries})).status_code == 200

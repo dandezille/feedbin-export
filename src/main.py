@@ -37,14 +37,5 @@ if __name__ == "__main__":
     print("Adding urls to inbox")
     inbox.add_tasks(entry_urls)
 
-    exit(0)
-
     print("Removing stars from entries")
-    req = feedbin_delete(
-        "starred_entries.json", data=json.dumps({"starred_entries": starred_ids})
-    )
-
-    print(req.status_code)
-    print(req.request.url)
-    print(req.request.headers)
-    print(req.request.body)
+    feedbin.remove_starred_entries(starred_ids)
