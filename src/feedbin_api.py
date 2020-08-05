@@ -3,6 +3,10 @@ import os
 import requests
 
 
+def _api_url(path):
+    return "https://api.feedbin.com/v2/" + path
+
+
 def _credentials():
     return requests.auth.HTTPBasicAuth(
         os.getenv("FEEDBIN_USER"), os.getenv("FEEDBIN_PASSWORD")
@@ -10,17 +14,14 @@ def _credentials():
 
 
 def _get(path, params=None):
-    base_url = "https://api.feedbin.com/v2/"
-
-    return requests.get(base_url + path, auth=_credentials(), params=params)
+    return requests.get(_api_url(path), auth=_credentials(), params=params)
 
 
 def _delete(path, data={}):
-    base_url = "https://api.feedbin.com/v2/"
     headers = {"content-type": "application/json"}
 
     return requests.delete(
-        base_url + path, auth=_credentials(), headers=headers, data=data
+        _api_url(path), auth=_credentials(), headers=headers, data=data
     )
 
 

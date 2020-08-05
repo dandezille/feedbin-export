@@ -2,7 +2,11 @@
 black
 isort
 
-# Features
+# Testing
+responses
+nose
+
+# Libs
 python-dotenv
 requests
 todoist-python
