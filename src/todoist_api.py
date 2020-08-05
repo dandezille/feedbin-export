@@ -1,5 +1,3 @@
-import os
-
 from todoist.api import TodoistAPI
 
 
@@ -15,8 +13,8 @@ class TodoistProject:
         self.__api.commit()
 
 
-def get_inbox():
-    todoist = TodoistAPI(os.getenv("TODOIST_API_KEY"))
+def get_inbox(api_key):
+    todoist = TodoistAPI(api_key)
     todoist.sync()
 
     id = [

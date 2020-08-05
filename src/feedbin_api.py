@@ -15,7 +15,9 @@ class FeedbinApi:
         return requests.auth.HTTPBasicAuth(self.__user, self.__password)
 
     def __get(self, path, params=None):
-        return requests.get(self.__api_url(path), auth=self.__credentials(), params=params)
+        return requests.get(
+            self.__api_url(path), auth=self.__credentials(), params=params
+        )
 
     def __delete(self, path, data={}):
         headers = {"content-type": "application/json"}
