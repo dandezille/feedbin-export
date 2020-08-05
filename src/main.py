@@ -1,11 +1,12 @@
 import json
+import os
 import sys
 from pprint import pp
 
 from dotenv import load_dotenv
 
-import feedbin_api as feedbin
 import todoist_api as todoist
+from feedbin_api import FeedbinApi
 
 
 def fail(msg):
@@ -17,12 +18,19 @@ if __name__ == "__main__":
     print("Loading environment")
     load_dotenv()
 
+    feedbin = FeedbinApi(os.getenv("FEEDBIN_USER"), os.getenv("FEEDBIN_PASSWORD"))
+
     print("Authenticating")
     if not feedbin.check_authenticated():
         fail("Failed to authenticate")
 
     print("Fetching starred entries")
     starred_ids = feedbin.get_starred_entries()
+
+    if not starred_ids:
+        print("No starred entries found")
+        exit(0)
+
     print("Received starred entries:")
     pp(starred_ids)
 
@@ -30,6 +38,7 @@ if __name__ == "__main__":
     entry_urls = feedbin.get_entry_urls(starred_ids)
     print("Received urls:")
     pp(entry_urls)
+
 
     print("Fetching inbox project")
     inbox = todoist.get_inbox()

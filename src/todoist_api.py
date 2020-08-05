@@ -1,5 +1,7 @@
-from todoist.api import TodoistAPI
 import os
+
+from todoist.api import TodoistAPI
+
 
 class TodoistProject:
     def __init__(self, api, project_id):
