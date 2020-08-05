@@ -3,9 +3,9 @@ import sys
 from pprint import pp
 
 from dotenv import load_dotenv
-from todoist.api import TodoistAPI
 
 import feedbin_api as feedbin
+import todoist_api as todoist
 
 
 def fail(msg):
@@ -31,26 +31,15 @@ if __name__ == "__main__":
     print("Received urls:")
     pp(entry_urls)
 
+    print("Fetching inbox project")
+    inbox = todoist.get_inbox()
+
+    print("Adding urls to inbox")
+    inbox.add_tasks(entry_urls)
+
     exit(0)
 
-    todoist = TodoistAPI("cf137683c65c146b2d358fc95c28a73270540e95")
-    todoist.sync()
-
-    id = [
-        project["id"]
-        for project in todoist.state["projects"]
-        if project["name"] == "Inbox"
-    ]
-    if len(id) != 1:
-        fail("Expected a single project id")
-
-    inbox = todoist.projects.get_by_id(int(id[0]))
-
-    for (id, url) in urls:
-        todoist.items.add(url, project_id=inbox)
-
-    todoist.commit()
-
+    print("Removing stars from entries")
     req = feedbin_delete(
         "starred_entries.json", data=json.dumps({"starred_entries": starred_ids})
     )
