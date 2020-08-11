@@ -1,3 +1,5 @@
+import sys
+
 from todoist.api import TodoistAPI
 
 
