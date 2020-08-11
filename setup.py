@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="feedbin-to-todoist",
-    version="0.0.1",
+    version="0.0.2",
     author="Dan de Zille",
     author_email="dan@ddez.net",
     description="Export starred Feedbin articles to Todoist inbox",
@@ -13,10 +13,11 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/dandezille/feedbin-to-todoist",
     packages=setuptools.find_packages(),
+    install_requires=["requests", "todoist-python"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.8',
+    python_requires=">=3.8",
 )
