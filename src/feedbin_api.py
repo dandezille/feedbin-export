@@ -3,27 +3,26 @@ import json
 import requests
 
 
+def _api_url(path):
+    return "https://api.feedbin.com/v2/" + path
+
+
 class FeedbinApi:
     def __init__(self, user, password):
         self.__user = user
         self.__password = password
 
-    def __api_url(self, path):
-        return "https://api.feedbin.com/v2/" + path
-
     def __credentials(self):
         return requests.auth.HTTPBasicAuth(self.__user, self.__password)
 
     def __get(self, path, params=None):
-        return requests.get(
-            self.__api_url(path), auth=self.__credentials(), params=params
-        )
+        return requests.get(_api_url(path), auth=self.__credentials(), params=params)
 
     def __delete(self, path, data={}):
         headers = {"content-type": "application/json"}
 
         return requests.delete(
-            self.__api_url(path), auth=self.__credentials(), headers=headers, data=data
+            _api_url(path), auth=self.__credentials(), headers=headers, data=data
         )
 
     def check_authenticated(self):
