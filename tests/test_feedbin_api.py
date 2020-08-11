@@ -5,14 +5,12 @@ import pytest
 import requests
 import responses
 
-import src.feedbin_api as feedbin
+import src.feedbin_api as feedbin_api
 
 
-@pytest.fixture(autouse=True)
-def run_around_tests(monkeypatch):
-    monkeypatch.setenv("FEEDBIN_USER", "user")
-    monkeypatch.setenv("FEEDBIN_PASSWORD", "password")
-    yield
+@pytest.fixture
+def feedbin():
+    return feedbin_api.FeedbinApi("user", "password")
 
 
 def has_auth_header(request):
@@ -22,12 +20,14 @@ def has_auth_header(request):
 
 
 def test_api_url():
-    assert feedbin._api_url("test.json") == "https://api.feedbin.com/v2/test.json"
+    assert feedbin_api._api_url("test.json") == "https://api.feedbin.com/v2/test.json"
 
 
 @responses.activate
-def test_check_authenticated_true():
-    responses.add(responses.GET, feedbin._api_url("authentication.json"), status=200)
+def test_check_authenticated_true(feedbin):
+    responses.add(
+        responses.GET, feedbin_api._api_url("authentication.json"), status=200
+    )
 
     assert feedbin.check_authenticated() == True
     assert len(responses.calls) == 1
@@ -35,8 +35,10 @@ def test_check_authenticated_true():
 
 
 @responses.activate
-def test_check_authenticated_false():
-    responses.add(responses.GET, feedbin._api_url("authentication.json"), status=401)
+def test_check_authenticated_false(feedbin):
+    responses.add(
+        responses.GET, feedbin_api._api_url("authentication.json"), status=401
+    )
 
     assert feedbin.check_authenticated() == False
     assert len(responses.calls) == 1
@@ -44,10 +46,10 @@ def test_check_authenticated_false():
 
 
 @responses.activate
-def test_get_starred_entries():
+def test_get_starred_entries(feedbin):
     responses.add(
         responses.GET,
-        feedbin._api_url("starred_entries.json"),
+        feedbin_api._api_url("starred_entries.json"),
         status=200,
         body="[42,57]",
     )
@@ -60,14 +62,14 @@ def test_get_starred_entries():
 
 
 @responses.activate
-def test_get_entry_urls():
+def test_get_entry_urls(feedbin):
     data = [
         {"id": 42, "url": "https://test.example.com"},
         {"id": 57, "url": "https://test2.example.com"},
     ]
     responses.add(
         responses.GET,
-        feedbin._api_url("entries.json"),
+        feedbin_api._api_url("entries.json"),
         status=200,
         body=json.dumps(data),
     )
