@@ -6,6 +6,10 @@ isort
 responses
 pytest
 
+# Build
+setuptools
+wheel
+
 # Libs
 python-dotenv
 requests
