@@ -1,8 +1,8 @@
 import sys
 from pprint import pp
 
-import todoist_api as todoist
-from feedbin_api import FeedbinApi
+from . import todoist_api as todoist
+from .feedbin_api import FeedbinApi
 
 
 def _fail(msg):

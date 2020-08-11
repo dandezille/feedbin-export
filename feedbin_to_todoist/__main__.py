@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 
-from feedbin_to_todoist import feedbin_to_todoist
+from .feedbin_to_todoist import feedbin_to_todoist
 
 if __name__ == "__main__":
     print("Loading environment")
