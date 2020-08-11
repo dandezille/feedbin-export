@@ -5,7 +5,7 @@ import pytest
 import requests
 import responses
 
-import src.feedbin_api as feedbin_api
+import feedbin_to_todoist.feedbin_api as feedbin_api
 
 
 @pytest.fixture
