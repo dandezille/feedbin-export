@@ -13,6 +13,10 @@ def main():
     )
 
 
+def function(request):
+    main()
+
+
 if __name__ == "__main__":
     print("Loading environment")
     load_dotenv()
