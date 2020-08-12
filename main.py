@@ -13,7 +13,7 @@ def main():
     )
 
 
-def function(request):
+def function(request, msg):
     main()
 
 
