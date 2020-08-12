@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from .feedbin_to_todoist import feedbin_to_todoist
 
-if __name__ == "__main__":
+def main():
     print("Loading environment")
     load_dotenv()
 
@@ -13,3 +13,6 @@ if __name__ == "__main__":
         os.getenv("FEEDBIN_PASSWORD"),
         os.getenv("TODOIST_API_KEY"),
     )
+
+if __name__ == "__main__":
+    main()

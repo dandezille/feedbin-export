@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-gcloud functions deploy gcloud-test --region=europe-west2 --trigger-http --runtime=python38 --source=./function --entry-point=main
+gcloud functions deploy gcloud-test --region=europe-west2 --trigger-http --runtime=python38 --entry-point=main
