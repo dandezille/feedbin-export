@@ -1,5 +1,5 @@
 import sys
-from pprint import pp
+from pprint import pprint as pp
 
 from . import todoist_api as todoist
 from .feedbin_api import FeedbinApi
