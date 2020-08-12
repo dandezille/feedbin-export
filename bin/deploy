@@ -2,4 +2,6 @@
 
 set -euo pipefail
 
-gcloud functions deploy gcloud-test --region=europe-west2 --trigger-http --runtime=python38 --entry-point=main
+source .env
+
+gcloud functions deploy feedbin-to-todoist --region=europe-west2 --trigger-http --runtime=python37 --entry-point=main --set-env-vars FEEDBIN_USER=$FEEDBIN_USER,FEEDBIN_PASSWORD=$FEEDBIN_PASSWORD,TODOIST_API_KEY=$TODOIST_API_KEY
