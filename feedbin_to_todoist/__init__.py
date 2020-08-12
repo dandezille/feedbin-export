@@ -5,7 +5,7 @@ from . import todoist_api as todoist
 from .feedbin_api import FeedbinApi
 
 
-def export(feedbin_user, feedbin_password, todoist_api_key):
+def export(feedbin_user: str, feedbin_password: str, todoist_api_key: str) -> None:
     feedbin = FeedbinApi(feedbin_user, feedbin_password)
 
     print("Authenticating")

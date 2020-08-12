@@ -5,11 +5,17 @@ from dotenv import load_dotenv
 from feedbin_to_todoist import export
 
 
-def main():
+def getenv(name: str) -> str:
+    value = os.getenv(name)
+    if value:
+        return value
+
+    raise KeyError("Environment variable {} not found".format(name))
+
+
+def main() -> None:
     export(
-        os.getenv("FEEDBIN_USER"),
-        os.getenv("FEEDBIN_PASSWORD"),
-        os.getenv("TODOIST_API_KEY"),
+        getenv("FEEDBIN_USER"), getenv("FEEDBIN_PASSWORD"), getenv("TODOIST_API_KEY"),
     )
 
 
