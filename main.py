@@ -19,7 +19,7 @@ def main() -> None:
     )
 
 
-def function(request, msg):
+def function(request, msg) -> None:
     main()
 
 
