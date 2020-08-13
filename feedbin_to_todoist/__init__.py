@@ -2,11 +2,11 @@ import sys
 from pprint import pprint as pp
 
 from . import todoist_api as todoist
-from .feedbin_api import FeedbinApi
+from . import feedbin_api
 
 
 def export(feedbin_user: str, feedbin_password: str, todoist_api_key: str) -> None:
-    feedbin = FeedbinApi(feedbin_user, feedbin_password)
+    feedbin = feedbin_api.connect(feedbin_user, feedbin_password)
 
     print("Authenticating")
     if not feedbin.check_authenticated():

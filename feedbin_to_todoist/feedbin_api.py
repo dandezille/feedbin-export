@@ -8,6 +8,9 @@ def _api_url(path: str) -> str:
     return "https://api.feedbin.com/v2/" + path
 
 
+def connect(user, password):
+    return FeedbinApi(user, password)
+
 class FeedbinApi:
     __user: str
     __password: str
