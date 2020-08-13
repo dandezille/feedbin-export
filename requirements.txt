@@ -1,10 +1,12 @@
-# Code formatting
+# Development
 black
 isort
+mypy
 
 # Testing
 responses
 pytest
+pytest-mypy
 
 # Libs
 python-dotenv
