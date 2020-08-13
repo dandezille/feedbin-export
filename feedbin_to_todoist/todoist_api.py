@@ -4,7 +4,7 @@ from todoist.api import TodoistAPI
 
 
 class TodoistProject:
-    def __init__(self, api, project_id):
+    def __init__(self, api : TodoistAPI, project_id : str) -> None:
         self.__api = api
         self.__project_id = project_id
 
@@ -15,12 +15,12 @@ class TodoistProject:
         self.__api.commit()
 
 
-def _fail(msg):
+def _fail(msg) -> None:
     sys.stderr.write("Fail: {}\n".format(msg))
     exit(1)
 
 
-def get_inbox(api_key):
+def get_inbox(api_key : str) :
     todoist = TodoistAPI(api_key)
     todoist.sync()
 
