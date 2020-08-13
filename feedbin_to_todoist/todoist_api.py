@@ -2,7 +2,6 @@ import sys
 
 from todoist.api import TodoistAPI
 
-
 class TodoistProject:
     __api: TodoistAPI
     __project_id: str
@@ -18,12 +17,7 @@ class TodoistProject:
         self.__api.commit()
 
 
-def _fail(msg) -> None:
-    sys.stderr.write("Fail: {}\n".format(msg))
-    exit(1)
-
-
-def get_inbox(api_key: str):
+def connect(api_key: str) -> TodoistProject:
     todoist = TodoistAPI(api_key)
     todoist.sync()
 
@@ -33,6 +27,6 @@ def get_inbox(api_key: str):
         if project["name"] == "Inbox"
     ]
     if len(id) != 1:
-        _fail("Expected a single project id")
+        raise Exception('Expected a single project id')
 
     return TodoistProject(todoist, todoist.projects.get_by_id(int(id[0])))
