@@ -7,3 +7,6 @@ mypy
 responses
 pytest
 pytest-mypy
+
+# Production
+-r requirements.txt
