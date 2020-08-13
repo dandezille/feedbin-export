@@ -2,6 +2,7 @@ import sys
 
 from todoist.api import TodoistAPI
 
+
 class TodoistProject:
     __api: TodoistAPI
     __project_id: str
@@ -27,6 +28,6 @@ def connect(api_key: str) -> TodoistProject:
         if project["name"] == "Inbox"
     ]
     if len(id) != 1:
-        raise Exception('Expected a single project id')
+        raise Exception("Expected a single project id")
 
     return TodoistProject(todoist, todoist.projects.get_by_id(int(id[0])))

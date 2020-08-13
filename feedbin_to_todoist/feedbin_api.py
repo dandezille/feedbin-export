@@ -11,6 +11,7 @@ def _api_url(path: str) -> str:
 def connect(user, password):
     return FeedbinApi(user, password)
 
+
 class FeedbinApi:
     __user: str
     __password: str

@@ -1,8 +1,7 @@
 import sys
 from pprint import pprint as pp
 
-from . import todoist_api
-from . import feedbin_api
+from . import feedbin_api, todoist_api
 
 
 def export(feedbin_user: str, feedbin_password: str, todoist_api_key: str) -> None:
