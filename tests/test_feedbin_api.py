@@ -112,3 +112,17 @@ def test_get_entry_urls_fail(feedbin):
 
     assert len(responses.calls) == 1
     assert has_auth_header(responses.calls[0].request)
+
+@responses.activate
+def test_remove_starred_entries(feedbin):
+    responses.add(
+        responses.DELETE,
+        feedbin_api._api_url("starred_entries.json"),
+        status=200,
+    )
+
+    feedbin.remove_starred_entries([42, 57])
+    assert responses.calls[0].request.body == '{"starred_entries": [42, 57]}'
+
+    assert len(responses.calls) == 1
+    assert has_auth_header(responses.calls[0].request)
