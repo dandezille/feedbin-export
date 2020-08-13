@@ -62,6 +62,21 @@ def test_get_starred_entries(feedbin):
 
 
 @responses.activate
+def test_get_starred_entries_fail(feedbin):
+    responses.add(
+        responses.GET, feedbin_api._api_url("starred_entries.json"), status=401
+    )
+
+    with pytest.raises(Exception) as ex:
+        feedbin.get_starred_entries()
+
+    assert "Status code 401" in str(ex.value)
+
+    assert len(responses.calls) == 1
+    assert has_auth_header(responses.calls[0].request)
+
+
+@responses.activate
 def test_get_entry_urls(feedbin):
     data = [
         {"id": 42, "url": "https://test.example.com"},
@@ -76,6 +91,49 @@ def test_get_entry_urls(feedbin):
 
     urls = feedbin.get_entry_urls([42, 57])
     assert urls == {42: "https://test.example.com", 57: "https://test2.example.com"}
+
+    assert len(responses.calls) == 1
+    assert has_auth_header(responses.calls[0].request)
+
+
+@responses.activate
+def test_get_entry_urls_fail(feedbin):
+    responses.add(
+        responses.GET, feedbin_api._api_url("entries.json"), status=401,
+    )
+
+    with pytest.raises(Exception) as ex:
+        feedbin.get_entry_urls([42, 57])
+
+    assert "Status code 401" in str(ex.value)
+
+    assert len(responses.calls) == 1
+    assert has_auth_header(responses.calls[0].request)
+
+
+@responses.activate
+def test_remove_starred_entries(feedbin):
+    responses.add(
+        responses.DELETE, feedbin_api._api_url("starred_entries.json"), status=200,
+    )
+
+    feedbin.remove_starred_entries([42, 57])
+    assert responses.calls[0].request.body == '{"starred_entries": [42, 57]}'
+
+    assert len(responses.calls) == 1
+    assert has_auth_header(responses.calls[0].request)
+
+
+@responses.activate
+def test_remove_starred_entries_fail(feedbin):
+    responses.add(
+        responses.DELETE, feedbin_api._api_url("starred_entries.json"), status=401,
+    )
+
+    with pytest.raises(Exception) as ex:
+        feedbin.remove_starred_entries([42, 57])
+
+    assert "Status code 401" in str(ex.value)
 
     assert len(responses.calls) == 1
     assert has_auth_header(responses.calls[0].request)

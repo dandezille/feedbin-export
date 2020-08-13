@@ -8,6 +8,13 @@ def _api_url(path: str) -> str:
     return "https://api.feedbin.com/v2/" + path
 
 
+def _check_status(response: requests.Response) -> requests.Response:
+    if response.status_code != 200:
+        raise Exception("Status code {}".format(response.status_code))
+
+    return response
+
+
 class FeedbinApi:
     __user: str
     __password: str
@@ -33,22 +40,20 @@ class FeedbinApi:
         return self.__get("authentication.json").status_code == 200
 
     def get_starred_entries(self) -> List[int]:
-        return self.__get("starred_entries.json").json()
+        return _check_status(self.__get("starred_entries.json")).json()
 
     def get_entry_urls(self, entries: List[int]) -> Dict[int, str]:
         entries_list = ",".join([str(id) for id in entries])
         entries_params = {"ids": entries_list}
 
-        response = self.__get("entries.json", params=entries_params)
-
+        response = _check_status(self.__get("entries.json", params=entries_params))
         return {entry["id"]: entry["url"] for entry in response.json()}
 
-    def remove_starred_entries(self, entries: List[int]) -> bool:
-        return (
+    def remove_starred_entries(self, entries: List[int]):
+        _check_status(
             self.__delete(
                 "starred_entries.json", data=json.dumps({"starred_entries": entries})
-            ).status_code
-            == 200
+            )
         )
 
 
