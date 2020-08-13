@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+gcloud functions call export --region=europe-west2 --data={}
