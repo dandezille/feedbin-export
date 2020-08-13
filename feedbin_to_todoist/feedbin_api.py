@@ -9,6 +9,9 @@ def _api_url(path: str) -> str:
 
 
 class FeedbinApi:
+    __user: str
+    __password: str
+
     def __init__(self, user: str, password: str) -> None:
         self.__user = user
         self.__password = password
