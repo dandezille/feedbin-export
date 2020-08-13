@@ -50,3 +50,11 @@ class FeedbinApi:
             ).status_code
             == 200
         )
+
+
+def connect(user: str, password: str) -> FeedbinApi:
+    feedbin = FeedbinApi(user, password)
+    if not feedbin.check_authenticated():
+        raise Exception("Failed to authenticate")
+
+    return feedbin
