@@ -5,12 +5,8 @@ from . import feedbin_api, todoist_api
 
 
 def export(feedbin_user: str, feedbin_password: str, todoist_api_key: str) -> None:
+    print("Connecting to Feedbin")
     feedbin = feedbin_api.connect(feedbin_user, feedbin_password)
-
-    print("Authenticating")
-    if not feedbin.check_authenticated():
-        print("Failed to authenticate")
-        return
 
     print("Fetching starred entries")
     starred_ids = feedbin.get_starred_entries()
