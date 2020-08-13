@@ -1,28 +1,24 @@
 import sys
-from pprint import pp
+from pprint import pprint as pp
 
 from . import todoist_api as todoist
 from .feedbin_api import FeedbinApi
 
 
-def _fail(msg):
-    sys.stderr.write("Fail: {}\n".format(msg))
-    exit(1)
-
-
-def feedbin_to_todoist(feedbin_user, feedbin_password, todoist_api_key):
+def export(feedbin_user, feedbin_password, todoist_api_key):
     feedbin = FeedbinApi(feedbin_user, feedbin_password)
 
     print("Authenticating")
     if not feedbin.check_authenticated():
-        _fail("Failed to authenticate")
+        print("Failed to authenticate")
+        return
 
     print("Fetching starred entries")
     starred_ids = feedbin.get_starred_entries()
 
     if not starred_ids:
         print("No starred entries found")
-        exit(0)
+        return
 
     print("Received starred entries:")
     pp(starred_ids)

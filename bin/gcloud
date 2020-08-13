@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+docker run -ti --rm -v $HOME/.config/gcloud:/root/.config/gcloud -w=/src -v `pwd`:/src  google/cloud-sdk gcloud "$@"

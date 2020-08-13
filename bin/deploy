@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source .env
+
+gcloud functions deploy export --region=europe-west2 --trigger-topic=run --runtime=python37 --entry-point=function --set-env-vars FEEDBIN_USER=$FEEDBIN_USER,FEEDBIN_PASSWORD=$FEEDBIN_PASSWORD,TODOIST_API_KEY=$TODOIST_API_KEY
