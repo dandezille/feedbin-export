@@ -33,7 +33,11 @@ class FeedbinApi:
         return self.__get("authentication.json").status_code == 200
 
     def get_starred_entries(self) -> List[int]:
-        return self.__get("starred_entries.json").json()
+        response = self.__get("starred_entries.json")
+        if response.status_code != 200:
+            raise Exception('Status code {}'.format(response.status_code))
+
+        return response.json()
 
     def get_entry_urls(self, entries: List[int]) -> Dict[int, str]:
         entries_list = ",".join([str(id) for id in entries])

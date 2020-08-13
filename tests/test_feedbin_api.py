@@ -62,6 +62,23 @@ def test_get_starred_entries(feedbin):
 
 
 @responses.activate
+def test_get_starred_entries_fail(feedbin):
+    responses.add(
+        responses.GET,
+        feedbin_api._api_url("starred_entries.json"),
+        status=401
+    )
+
+    with pytest.raises(Exception) as ex:
+        feedbin.get_starred_entries()
+
+    assert 'Status code 401' in str(ex.value)
+
+    assert len(responses.calls) == 1
+    assert has_auth_header(responses.calls[0].request)
+
+
+@responses.activate
 def test_get_entry_urls(feedbin):
     data = [
         {"id": 42, "url": "https://test.example.com"},
