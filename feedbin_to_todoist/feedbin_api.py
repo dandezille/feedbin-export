@@ -35,7 +35,7 @@ class FeedbinApi:
     def get_starred_entries(self) -> List[int]:
         response = self.__get("starred_entries.json")
         if response.status_code != 200:
-            raise Exception('Status code {}'.format(response.status_code))
+            raise Exception("Status code {}".format(response.status_code))
 
         return response.json()
 
@@ -45,17 +45,17 @@ class FeedbinApi:
 
         response = self.__get("entries.json", params=entries_params)
         if response.status_code != 200:
-            raise Exception('Status code {}'.format(response.status_code))
+            raise Exception("Status code {}".format(response.status_code))
 
         return {entry["id"]: entry["url"] for entry in response.json()}
 
-    def remove_starred_entries(self, entries: List[int]) -> bool:
-        return (
-            self.__delete(
-                "starred_entries.json", data=json.dumps({"starred_entries": entries})
-            ).status_code
-            == 200
+    def remove_starred_entries(self, entries: List[int]):
+        response = self.__delete(
+            "starred_entries.json", data=json.dumps({"starred_entries": entries})
         )
+
+        if response.status_code != 200:
+            raise Exception("Status code {}".format(response.status_code))
 
 
 def connect(user: str, password: str) -> FeedbinApi:
