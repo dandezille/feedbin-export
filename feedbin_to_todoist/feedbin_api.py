@@ -44,6 +44,8 @@ class FeedbinApi:
         entries_params = {"ids": entries_list}
 
         response = self.__get("entries.json", params=entries_params)
+        if response.status_code != 200:
+            raise Exception('Status code {}'.format(response.status_code))
 
         return {entry["id"]: entry["url"] for entry in response.json()}
 
