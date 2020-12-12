@@ -13,7 +13,8 @@ import (
 type StarredResult []int
 
 type FeedEntry struct {
-  Url   string `json:"url"`
+  Id  int `json:"id"`
+  Url string `json:"url"`
 }
 
 type EntriesResult []FeedEntry
