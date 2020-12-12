@@ -13,7 +13,7 @@ import (
 func main() {
   err := godotenv.Load()
   if err != nil {
-    log.Fatal(err)
+    log.Println("Failed to load .env")
   }
 
   interval, err := time.ParseDuration(utils.ReadEnv("TICKER_INTERVAL"))
