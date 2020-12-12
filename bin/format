@@ -1,6 +1,0 @@
-#! /bin/bash
-
-set -euo pipefail
-
-python3 -m isort .
-python3 -m black .
