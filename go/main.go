@@ -3,7 +3,9 @@ package main
 import (
   "github.com/joho/godotenv"
   "log"
+  "time"
 
+  "github.com/dandezille/feedbin-to-todoist/utils"
   "github.com/dandezille/feedbin-to-todoist/feedbin"
   "github.com/dandezille/feedbin-to-todoist/todoist"
 )
@@ -14,7 +16,17 @@ func main() {
     log.Fatal(err)
   }
 
-  fetchFeeds()
+  interval, err := time.ParseDuration(utils.ReadEnv("TICKER_INTERVAL"))
+  if err != nil {
+    log.Fatal(err.Error())
+  }
+
+  ticker := time.NewTicker(interval)
+  defer ticker.Stop()
+
+  for ; true; <- ticker.C {
+    fetchFeeds()
+  }
 }
 
 func fetchFeeds() {
