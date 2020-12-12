@@ -3,10 +3,13 @@ package feedbin
 import (
   "log"
   "net/http"
+  "io"
+  "bytes"
   "io/ioutil"
   "strings"
   "encoding/json"
   "fmt"
+  "strconv"
 
   "github.com/dandezille/feedbin-to-todoist/utils"
 )
@@ -26,16 +29,31 @@ func Connect() FeedbinClient {
 
 func (c *FeedbinClient) GetStarredEntries() []FeedEntry {
   starred := getStarredEntries()
+  if len(starred) == 0 {
+    return nil
+  }
+
   entries := getEntries(starred)
   return entries
 }
 
+func (c *FeedbinClient) Unstar(entries []FeedEntry) {
+  var ids []string
+  for _, entry := range entries {
+    ids = append(ids, strconv.Itoa(entry.Id))
+  }
+
+  body := `{"starred_entries": [` + strings.Join(ids, ",") + "]}"
+  log.Println(body)
+  delete("starred_entries.json", body)
+}
+
 func ensureAuthenticated() {
-  request("authentication.json")
+  get("authentication.json")
 }
 
 func getStarredEntries() []int {
-  response := request("starred_entries.json")
+  response := get("starred_entries.json")
 
   var starred []int
   err := json.Unmarshal(response, &starred)
@@ -48,7 +66,7 @@ func getStarredEntries() []int {
 
 func getEntries(starred []int) []FeedEntry {
   ids := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(starred)), ","), "[]")
-  response := request("entries.json?ids=" + ids)
+  response := get("entries.json?ids=" + ids)
 
   var entries []FeedEntry
   err := json.Unmarshal(response, &entries)
@@ -64,11 +82,19 @@ func url(path string) string {
   return baseUrl + path
 }
 
-func request(path string) []byte {
+func get(path string) []byte {
+  return request("GET", path, "")
+}
+
+func delete(path string, body string) []byte {
+  return request("DELETE", path, body)
+}
+
+func request(method string, path string, data string) []byte {
   url := url(path)
   log.Println("request: " + url)
 
-  request, err := http.NewRequest("GET", url, nil)
+  request, err := http.NewRequest(method, url, getBody(data))
   if err != nil {
     log.Fatal(err)
   }
@@ -77,6 +103,8 @@ func request(path string) []byte {
   password := utils.ReadEnv("FEEDBIN_PASSWORD")
 
   request.SetBasicAuth(user, password)
+  request.Header.Add("Content-Type", "application/json")
+
   client := &http.Client{}
   response, err := client.Do(request)
   if err != nil {
@@ -97,3 +125,10 @@ func request(path string) []byte {
   return body
 }
 
+func getBody(data string) io.Reader {
+  if data == "" {
+    return nil
+  } else {
+    return bytes.NewBuffer([]byte(data))
+  }
+}

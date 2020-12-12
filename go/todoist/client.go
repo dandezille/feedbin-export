@@ -78,5 +78,4 @@ func getBody(data string) io.Reader {
   } else {
     return bytes.NewBuffer([]byte(data))
   }
-
 }
