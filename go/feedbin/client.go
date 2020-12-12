@@ -11,13 +11,20 @@ import (
   "github.com/dandezille/feedbin-to-todoist/utils"
 )
 
+type FeedbinClient struct {
+}
+
 type FeedEntry struct {
   Id  int `json:"id"`
   Url string `json:"url"`
 }
 
-func GetStarredEntries() []FeedEntry {
+func Connect() FeedbinClient {
   ensureAuthenticated()
+  return FeedbinClient{}
+}
+
+func (c *FeedbinClient) GetStarredEntries() []FeedEntry {
   starred := getStarredEntries()
   entries := getEntries(starred)
   return entries
