@@ -91,23 +91,9 @@ func (c *Client) delete(path string, body string) []byte {
   return c.request("DELETE", path, body)
 }
 
-func (c *Client) newRequest(method string, path string, data string) *http.Request {
-  request, err := http.NewRequest(method, path, utils.BodyFromString(data))
-  if err != nil {
-    log.Fatal(err)
-  }
-
-  request.SetBasicAuth(c.user, c.password)
-  request.Header.Add("Content-Type", "application/json")
-
-  return request
-}
-
 func (c *Client) request(method string, path string, data string) []byte {
-  url := c.client.Url(path)
-  log.Println("request: " + url)
-
-  request := c.newRequest(method, url, data)
+  request := c.client.NewRequest(method, path, data)
+  request.SetBasicAuth(c.user, c.password)
 
   client := &http.Client{}
   response, err := client.Do(request)
@@ -117,7 +103,7 @@ func (c *Client) request(method string, path string, data string) []byte {
   defer response.Body.Close()
 
   if response.StatusCode != 200 {
-    log.Fatal("request for " + url + " status " + response.Status)
+    log.Fatal(response.Status)
   }
 
   body, err := ioutil.ReadAll(response.Body)
