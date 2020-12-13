@@ -26,22 +26,9 @@ func Connect(key string) Client {
 }
 
 func (c *Client) CreateEntry(content string) {
-  c.post("tasks", `{ "content": "` + content + `" }`)
+  c.client.Post("tasks", `{ "content": "` + content + `" }`)
 }
 
 func (c *Client) ensureAuthenticated() {
-  c.get("projects")
-}
-
-func (c *Client) get(path string) {
-  c.request("GET", path, "")
-}
-
-func (c *Client) post(path string, data string) {
-  c.request("POST", path, data)
-}
-
-func (c *Client) request(method string, path string, data string) []byte {
-  request := c.client.NewRequest(method, path, data)
-  return c.client.Execute(request)
+  c.client.Get("projects")
 }

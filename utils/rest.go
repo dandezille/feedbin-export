@@ -20,9 +20,24 @@ func NewRestClient(url string, customiseRequest func(*http.Request)) RestClient 
   }
 }
 
-func (c *RestClient) NewRequest(method string, path string, data string) *http.Request {
+func (c *RestClient) Get(path string) []byte {
+  request := c.newRequest("GET", path, "")
+  return c.execute(request)
+}
+
+func (c *RestClient) Post(path string, data string) []byte {
+  request := c.newRequest("POST", path, data)
+  return c.execute(request)
+}
+
+func (c *RestClient) Delete(path string, data string) []byte {
+  request := c.newRequest("DELETE", path, data)
+  return c.execute(request)
+}
+
+func (c *RestClient) newRequest(method string, path string, data string) *http.Request {
   url := c.url + path
-  log.Println("GET: " + url)
+  log.Println(method + ": " + url)
 
   request, err := http.NewRequest(method, url, bodyFromString(data))
   if err != nil {
@@ -35,7 +50,7 @@ func (c *RestClient) NewRequest(method string, path string, data string) *http.R
   return request
 }
 
-func (c *RestClient) Execute(request *http.Request) []byte {
+func (c *RestClient) execute(request *http.Request) []byte {
   client := &http.Client{}
   response, err := client.Do(request)
   if err != nil {

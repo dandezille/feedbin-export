@@ -54,15 +54,15 @@ func (c *Client) Unstar(entries []FeedEntry) {
 
   body := `{"starred_entries": [` + strings.Join(ids, ",") + "]}"
   log.Println(body)
-  c.delete("starred_entries.json", body)
+  c.client.Delete("starred_entries.json", body)
 }
 
 func (c *Client) ensureAuthenticated() {
-  c.get("authentication.json")
+  c.client.Get("authentication.json")
 }
 
 func (c *Client) getStarredEntries() []int {
-  response := c.get("starred_entries.json")
+  response := c.client.Get("starred_entries.json")
 
   var starred []int
   err := json.Unmarshal(response, &starred)
@@ -75,7 +75,7 @@ func (c *Client) getStarredEntries() []int {
 
 func (c *Client) getEntries(starred []int) []FeedEntry {
   ids := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(starred)), ","), "[]")
-  response := c.get("entries.json?ids=" + ids)
+  response := c.client.Get("entries.json?ids=" + ids)
 
   var entries []FeedEntry
   err := json.Unmarshal(response, &entries)
@@ -84,17 +84,4 @@ func (c *Client) getEntries(starred []int) []FeedEntry {
   }
 
   return entries
-}
-
-func (c *Client) get(path string) []byte {
-  return c.request("GET", path, "")
-}
-
-func (c *Client) delete(path string, body string) []byte {
-  return c.request("DELETE", path, body)
-}
-
-func (c *Client) request(method string, path string, data string) []byte {
-  request := c.client.NewRequest(method, path, data)
-  return c.client.Execute(request)
 }
