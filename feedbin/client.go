@@ -6,6 +6,7 @@ import (
   "encoding/json"
   "fmt"
   "strconv"
+  "net/http"
 
   "github.com/dandezille/feedbin-to-todoist/utils"
 )
@@ -22,10 +23,14 @@ type FeedEntry struct {
 }
 
 func Connect(user string, password string) Client {
+  customiseRequest := func(request *http.Request) {
+    request.SetBasicAuth(user, password)
+  }
+
   c := Client{
     user: user,
     password: password,
-    client: utils.NewRestClient("https://api.feedbin.com/v2/"),
+    client: utils.NewRestClient("https://api.feedbin.com/v2/", customiseRequest),
   }
   c.ensureAuthenticated()
   return c
@@ -91,6 +96,5 @@ func (c *Client) delete(path string, body string) []byte {
 
 func (c *Client) request(method string, path string, data string) []byte {
   request := c.client.NewRequest(method, path, data)
-  request.SetBasicAuth(c.user, c.password)
   return c.client.Execute(request)
 }

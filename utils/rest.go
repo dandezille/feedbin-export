@@ -10,11 +10,13 @@ import (
 
 type RestClient struct {
   url string
+  customiseRequest func(*http.Request)
 }
 
-func NewRestClient(url string) RestClient {
+func NewRestClient(url string, customiseRequest func(*http.Request)) RestClient {
   return RestClient { 
     url: url,
+    customiseRequest: customiseRequest,
   }
 }
 
@@ -28,6 +30,7 @@ func (c *RestClient) NewRequest(method string, path string, data string) *http.R
   }
 
   request.Header.Add("Content-Type", "application/json")
+  c.customiseRequest(request)
 
   return request
 }

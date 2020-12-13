@@ -1,6 +1,8 @@
 package todoist
 
 import (
+  "net/http"
+
   "github.com/dandezille/feedbin-to-todoist/utils"
 )
 
@@ -10,10 +12,15 @@ type Client struct {
 }
 
 func Connect(key string) Client {
+  customiseRequest := func(request *http.Request) {
+    request.Header.Add("Authorization", "Bearer " + key)
+  }
+
   c := Client{
     key: key,
-    client: utils.NewRestClient("https://api.todoist.com/rest/v1/"),
+    client: utils.NewRestClient("https://api.todoist.com/rest/v1/", customiseRequest),
   }
+
   c.ensureAuthenticated()
   return c
 }
@@ -36,6 +43,5 @@ func (c *Client) post(path string, data string) {
 
 func (c *Client) request(method string, path string, data string) []byte {
   request := c.client.NewRequest(method, path, data)
-  request.Header.Add("Authorization", "Bearer " + c.key)
   return c.client.Execute(request)
 }
