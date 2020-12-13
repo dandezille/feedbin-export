@@ -6,24 +6,26 @@ import (
   "bytes"
   "net/http"
   "io/ioutil"
-
-  "github.com/dandezille/feedbin-to-todoist/utils"
 )
 
-type TodoistClient struct {
+type Client struct {
+  key string
 }
 
-func Connect() TodoistClient {
-  ensureAuthenticated()
-  return TodoistClient{}
+func Connect(key string) Client {
+  c := Client{
+    key: key,
+  }
+  c.ensureAuthenticated()
+  return c
 }
 
-func (c *TodoistClient) CreateEntry(content string) {
-  post("tasks", `{ "content": "` + content + `" }`)
+func (c *Client) CreateEntry(content string) {
+  c.post("tasks", `{ "content": "` + content + `" }`)
 }
 
-func ensureAuthenticated() {
-  get("projects")
+func (c *Client) ensureAuthenticated() {
+  c.get("projects")
 }
 
 func url(path string) string {
@@ -31,15 +33,15 @@ func url(path string) string {
   return baseUrl + path
 }
 
-func get(path string) {
-  request("GET", path, "")
+func (c *Client) get(path string) {
+  c.request("GET", path, "")
 }
 
-func post(path string, data string) {
-  request("POST", path, data)
+func (c *Client) post(path string, data string) {
+  c.request("POST", path, data)
 }
 
-func request(method string, path string, data string) []byte {
+func (c *Client) request(method string, path string, data string) []byte {
   url := url(path)
   log.Println("request: " + url)
 
@@ -48,8 +50,7 @@ func request(method string, path string, data string) []byte {
     log.Fatal(err)
   }
 
-  key := utils.ReadEnv("TODOIST_API_KEY")
-  request.Header.Add("Authorization", "Bearer " + key)
+  request.Header.Add("Authorization", "Bearer " + c.key)
   request.Header.Add("Content-Type", "application/json")
 
   client := &http.Client{}

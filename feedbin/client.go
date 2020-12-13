@@ -22,9 +22,11 @@ type FeedEntry struct {
   Url string `json:"url"`
 }
 
-func Connect() FeedbinClient {
+func Connect(user string, password string) FeedbinClient {
+  c := FeedbinClient{
+  }
   ensureAuthenticated()
-  return FeedbinClient{}
+  return c
 }
 
 func (c *FeedbinClient) GetStarredEntries() []FeedEntry {
