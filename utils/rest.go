@@ -37,7 +37,7 @@ func (c *RestClient) Delete(path string, data string) []byte {
 
 func (c *RestClient) newRequest(method string, path string, data string) *http.Request {
   url := c.url + path
-  log.Println(method + ": " + url)
+  log.Println(method + ": " + url + " " + data)
 
   request, err := http.NewRequest(method, url, bodyFromString(data))
   if err != nil {
