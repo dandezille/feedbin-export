@@ -41,17 +41,23 @@ func (c *Client) post(path string, data string) {
   c.request("POST", path, data)
 }
 
-func (c *Client) request(method string, path string, data string) []byte {
-  url := url(path)
-  log.Println("request: " + url)
-
-  request, err := http.NewRequest(method, url, getBody(data))
+func (c *Client) newRequest(method string, path string, data string) *http.Request {
+  request, err := http.NewRequest(method, path, getBody(data))
   if err != nil {
     log.Fatal(err)
   }
 
   request.Header.Add("Authorization", "Bearer " + c.key)
   request.Header.Add("Content-Type", "application/json")
+
+  return request
+}
+
+func (c *Client) request(method string, path string, data string) []byte {
+  url := url(path)
+  log.Println("request: " + url)
+
+  request := c.newRequest(method, url, data)
 
   client := &http.Client{}
   response, err := client.Do(request)
