@@ -2,8 +2,6 @@ package todoist
 
 import (
   "log"
-  "io"
-  "bytes"
   "net/http"
   "io/ioutil"
 
@@ -12,11 +10,13 @@ import (
 
 type Client struct {
   key string
+  client utils.RestClient
 }
 
 func Connect(key string) Client {
   c := Client{
     key: key,
+    client: utils.NewRestClient("https://api.todoist.com/rest/v1/"),
   }
   c.ensureAuthenticated()
   return c
@@ -28,11 +28,6 @@ func (c *Client) CreateEntry(content string) {
 
 func (c *Client) ensureAuthenticated() {
   c.get("projects")
-}
-
-func url(path string) string {
-  baseUrl := "https://api.todoist.com/rest/v1/"
-  return baseUrl + path
 }
 
 func (c *Client) get(path string) {
@@ -56,7 +51,7 @@ func (c *Client) newRequest(method string, path string, data string) *http.Reque
 }
 
 func (c *Client) request(method string, path string, data string) []byte {
-  url := url(path)
+  url := c.client.Url(path)
   log.Println("request: " + url)
 
   request := c.newRequest(method, url, data)
@@ -79,12 +74,4 @@ func (c *Client) request(method string, path string, data string) []byte {
 
   log.Println("response: " + string(body))
   return body
-}
-
-func getBody(data string) io.Reader {
-  if data == "" {
-    return nil
-  } else {
-    return bytes.NewBuffer([]byte(data))
-  }
 }

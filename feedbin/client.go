@@ -15,6 +15,7 @@ import (
 type Client struct {
   user string
   password string
+  client utils.RestClient
 }
 
 type FeedEntry struct {
@@ -26,6 +27,7 @@ func Connect(user string, password string) Client {
   c := Client{
     user: user,
     password: password,
+    client: utils.NewRestClient("https://api.feedbin.com/v2/"),
   }
   c.ensureAuthenticated()
   return c
@@ -81,11 +83,6 @@ func (c *Client) getEntries(starred []int) []FeedEntry {
   return entries
 }
 
-func url(path string) string {
-  baseUrl := "https://api.feedbin.com/v2/"
-  return baseUrl + path
-}
-
 func (c *Client) get(path string) []byte {
   return c.request("GET", path, "")
 }
@@ -107,7 +104,7 @@ func (c *Client) newRequest(method string, path string, data string) *http.Reque
 }
 
 func (c *Client) request(method string, path string, data string) []byte {
-  url := url(path)
+  url := c.client.Url(path)
   log.Println("request: " + url)
 
   request := c.newRequest(method, url, data)
