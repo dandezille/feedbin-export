@@ -6,6 +6,8 @@ import (
   "bytes"
   "net/http"
   "io/ioutil"
+
+  "github.com/dandezille/feedbin-to-todoist/utils"
 )
 
 type Client struct {
@@ -42,7 +44,7 @@ func (c *Client) post(path string, data string) {
 }
 
 func (c *Client) newRequest(method string, path string, data string) *http.Request {
-  request, err := http.NewRequest(method, path, getBody(data))
+  request, err := http.NewRequest(method, path, utils.BodyFromString(data))
   if err != nil {
     log.Fatal(err)
   }

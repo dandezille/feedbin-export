@@ -3,13 +3,13 @@ package feedbin
 import (
   "log"
   "net/http"
-  "io"
-  "bytes"
   "io/ioutil"
   "strings"
   "encoding/json"
   "fmt"
   "strconv"
+
+  "github.com/dandezille/feedbin-to-todoist/utils"
 )
 
 type Client struct {
@@ -95,7 +95,7 @@ func (c *Client) delete(path string, body string) []byte {
 }
 
 func (c *Client) newRequest(method string, path string, data string) *http.Request {
-  request, err := http.NewRequest(method, path, getBody(data))
+  request, err := http.NewRequest(method, path, utils.BodyFromString(data))
   if err != nil {
     log.Fatal(err)
   }
@@ -130,12 +130,4 @@ func (c *Client) request(method string, path string, data string) []byte {
 
   log.Println("response: " + string(body))
   return body
-}
-
-func getBody(data string) io.Reader {
-  if data == "" {
-    return nil
-  } else {
-    return bytes.NewBuffer([]byte(data))
-  }
 }
