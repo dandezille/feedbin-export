@@ -3,6 +3,7 @@ package utils
 import (
   "bytes"
   "io"
+  "io/ioutil"
   "log"
   "net/http"
 )
@@ -29,6 +30,27 @@ func (c *RestClient) NewRequest(method string, path string, data string) *http.R
   request.Header.Add("Content-Type", "application/json")
 
   return request
+}
+
+func (c *RestClient) Execute(request *http.Request) []byte {
+  client := &http.Client{}
+  response, err := client.Do(request)
+  if err != nil {
+    log.Fatal(err)
+  }
+  defer response.Body.Close()
+
+  if response.StatusCode != 200 {
+    log.Fatal(response.Status)
+  }
+
+  body, err := ioutil.ReadAll(response.Body)
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  log.Println("response: " + string(body))
+  return body
 }
 
 func bodyFromString(data string) io.Reader {

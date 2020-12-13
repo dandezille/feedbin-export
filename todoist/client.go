@@ -1,10 +1,6 @@
 package todoist
 
 import (
-  "log"
-  "net/http"
-  "io/ioutil"
-
   "github.com/dandezille/feedbin-to-todoist/utils"
 )
 
@@ -41,23 +37,5 @@ func (c *Client) post(path string, data string) {
 func (c *Client) request(method string, path string, data string) []byte {
   request := c.client.NewRequest(method, path, data)
   request.Header.Add("Authorization", "Bearer " + c.key)
-
-  client := &http.Client{}
-  response, err := client.Do(request)
-  if err != nil {
-    log.Fatal(err)
-  }
-  defer response.Body.Close()
-
-  if response.StatusCode != 200 {
-    log.Fatal(response.Status)
-  }
-
-  body, err := ioutil.ReadAll(response.Body)
-  if err != nil {
-    log.Fatal(err)
-  }
-
-  log.Println("response: " + string(body))
-  return body
+  return c.client.Execute(request)
 }
