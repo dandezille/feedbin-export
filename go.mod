@@ -1,4 +1,4 @@
-module github.com/dandezille/feedbin-to-todoist
+module github.com/dandezille/feedbin-export
 
 go 1.15
 

@@ -1,4 +1,4 @@
-APP_NAME=feedbin-to-todoist
+APP_NAME=feedbin-export
 
 build:
 	docker build -t $(APP_NAME) .
