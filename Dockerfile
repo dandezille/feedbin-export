@@ -1,10 +1,15 @@
-FROM golang:1.15
+FROM golang:latest
 
 WORKDIR /app
 
 COPY . .
 
 RUN go get -d -v ./...
-RUN go install -v ./...
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
 
-CMD ["feedbin-export"]
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=0 /app/app .
+
+CMD ["./app"]
