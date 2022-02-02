@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/dandezille/feedbin-export/feedbin"
-	"github.com/dandezille/feedbin-export/todoist"
+	"github.com/dandezille/feedbin-export/pinboard"
 	"github.com/dandezille/feedbin-export/utils"
 )
 
@@ -32,6 +32,8 @@ func main() {
 
 func fetchFeeds() {
 	feedbin := createFeedbinClient()
+	pinboard := createPinboardClient()
+
 	entries, err := feedbin.GetStarredEntries()
 	if err != nil {
 		log.Fatal(err)
@@ -43,9 +45,11 @@ func fetchFeeds() {
 		return
 	}
 
-	todoist := createTodoistClient()
 	for _, entry := range entries {
-		todoist.CreateEntry(entry.Url)
+		err = pinboard.CreateEntry(entry.Url, entry.Title)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	err = feedbin.Unstar(entries)
@@ -60,7 +64,12 @@ func createFeedbinClient() feedbin.Client {
 	return feedbin.Connect(feedbinUser, feedbinPassword)
 }
 
-func createTodoistClient() todoist.Client {
-	todoistKey := utils.ReadEnv("TODOIST_API_KEY")
-	return todoist.Connect(todoistKey)
+func createPinboardClient() *pinboard.Client {
+	key := utils.ReadEnv("PINBOARD_API_KEY")
+	client, err := pinboard.Connect(key)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return client
 }
