@@ -71,16 +71,17 @@ func (c *RestClient) execute(request *http.Request) ([]byte, error) {
 	}
 	defer response.Body.Close()
 
-	if response.StatusCode != 200 {
-		return nil, fmt.Errorf("Unexpected status code: %v", response.StatusCode)
-	}
-
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
 
 	log.Println("response: " + string(body))
+
+	if response.StatusCode != 200 {
+		return nil, fmt.Errorf("Unexpected status code: %v", response.StatusCode)
+	}
+
 	return body, nil
 }
 
