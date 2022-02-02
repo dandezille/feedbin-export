@@ -1,6 +1,7 @@
 package todoist
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/dandezille/feedbin-export/utils"
@@ -26,9 +27,15 @@ func Connect(key string) Client {
 }
 
 func (c *Client) CreateEntry(content string) {
-	c.client.Post("tasks", `{ "content": "`+content+`" }`)
+	_, err := c.client.Post("tasks", `{ "content": "`+content+`" }`)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (c *Client) ensureAuthenticated() {
-	c.client.Get("projects")
+	_, err := c.client.Get("projects")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
