@@ -36,17 +36,20 @@ func Connect(user string, password string) Client {
 	return c
 }
 
-func (c *Client) GetStarredEntries() []FeedEntry {
-	starred := c.getStarredEntries()
-	if len(starred) == 0 {
-		return nil
+func (c *Client) GetStarredEntries() ([]FeedEntry, error) {
+	starred, err := c.getStarredEntries()
+	if err != nil {
+		return nil, err
 	}
 
-	entries := c.getEntries(starred)
-	return entries
+	if len(starred) == 0 {
+		return nil, nil
+	}
+
+	return c.getEntries(starred)
 }
 
-func (c *Client) Unstar(entries []FeedEntry) {
+func (c *Client) Unstar(entries []FeedEntry) error {
 	var ids []string
 	for _, entry := range entries {
 		ids = append(ids, strconv.Itoa(entry.Id))
@@ -54,34 +57,45 @@ func (c *Client) Unstar(entries []FeedEntry) {
 
 	body := `{"starred_entries": [` + strings.Join(ids, ",") + "]}"
 	log.Println(body)
-	c.client.Delete("starred_entries.json", body)
+
+	_, err := c.client.Delete("starred_entries.json", body)
+	return err
 }
 
 func (c *Client) ensureAuthenticated() {
-	c.client.Get("authentication.json")
+	_, err := c.client.Get("authentication.json")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-func (c *Client) getStarredEntries() []int {
-	response := c.client.Get("starred_entries.json")
+func (c *Client) getStarredEntries() ([]int, error) {
+	response, err := c.client.Get("starred_entries.json")
+	if err != nil {
+		return nil, err
+	}
 
 	var starred []int
-	err := json.Unmarshal(response, &starred)
+	err = json.Unmarshal(response, &starred)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	return starred
+	return starred, nil
 }
 
-func (c *Client) getEntries(starred []int) []FeedEntry {
+func (c *Client) getEntries(starred []int) ([]FeedEntry, error) {
 	ids := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(starred)), ","), "[]")
-	response := c.client.Get("entries.json?ids=" + ids)
-
-	var entries []FeedEntry
-	err := json.Unmarshal(response, &entries)
+	response, err := c.client.Get("entries.json?ids=" + ids)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	return entries
+	var entries []FeedEntry
+	err = json.Unmarshal(response, &entries)
+	if err != nil {
+		return nil, err
+	}
+
+	return entries, nil
 }

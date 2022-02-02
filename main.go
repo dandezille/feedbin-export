@@ -32,9 +32,12 @@ func main() {
 
 func fetchFeeds() {
 	feedbin := createFeedbinClient()
-	entries := feedbin.GetStarredEntries()
-	log.Println(entries)
+	entries, err := feedbin.GetStarredEntries()
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	log.Println(entries)
 	if len(entries) == 0 {
 		log.Println("No starred entries")
 		return
@@ -45,7 +48,10 @@ func fetchFeeds() {
 		todoist.CreateEntry(entry.Url)
 	}
 
-	feedbin.Unstar(entries)
+	err = feedbin.Unstar(entries)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func createFeedbinClient() feedbin.Client {
