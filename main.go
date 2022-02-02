@@ -31,11 +31,7 @@ func main() {
 }
 
 func fetchFeeds() {
-	feedbinUser := utils.ReadEnv("FEEDBIN_USER")
-	feedbinPassword := utils.ReadEnv("FEEDBIN_PASSWORD")
-	todoistKey := utils.ReadEnv("TODOIST_API_KEY")
-
-	feedbin := feedbin.Connect(feedbinUser, feedbinPassword)
+	feedbin := createFeedbinClient()
 	entries := feedbin.GetStarredEntries()
 	log.Println(entries)
 
@@ -44,10 +40,21 @@ func fetchFeeds() {
 		return
 	}
 
-	todoist := todoist.Connect(todoistKey)
+	todoist := createTodoistClient()
 	for _, entry := range entries {
 		todoist.CreateEntry(entry.Url)
 	}
 
 	feedbin.Unstar(entries)
+}
+
+func createFeedbinClient() feedbin.Client {
+	feedbinUser := utils.ReadEnv("FEEDBIN_USER")
+	feedbinPassword := utils.ReadEnv("FEEDBIN_PASSWORD")
+	return feedbin.Connect(feedbinUser, feedbinPassword)
+}
+
+func createTodoistClient() todoist.Client {
+	todoistKey := utils.ReadEnv("TODOIST_API_KEY")
+	return todoist.Connect(todoistKey)
 }
