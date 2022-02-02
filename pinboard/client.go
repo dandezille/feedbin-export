@@ -3,7 +3,6 @@ package pinboard
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 
@@ -43,7 +42,7 @@ func (c *Client) CreateEntry(content string, title string) error {
 
 	response, err := c.client.Get(q)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	var result Result
