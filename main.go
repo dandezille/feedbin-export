@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/dandezille/feedbin-export/feedbin"
-	"github.com/dandezille/feedbin-export/pinboard"
+	"github.com/dandezille/feedbin-export/raindrop"
 	"github.com/dandezille/feedbin-export/utils"
 )
 
@@ -32,7 +32,7 @@ func main() {
 
 func fetchFeeds() {
 	feedbin := createFeedbinClient()
-	pinboard := createPinboardClient()
+	raindrop := createRaindropClient()
 
 	entries, err := feedbin.GetStarredEntries()
 	if err != nil {
@@ -46,7 +46,7 @@ func fetchFeeds() {
 	}
 
 	for _, entry := range entries {
-		err = pinboard.CreateEntry(entry.Url, entry.Title)
+		err = raindrop.CreateEntry(entry.Url, entry.Title)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -64,9 +64,9 @@ func createFeedbinClient() feedbin.Client {
 	return feedbin.Connect(feedbinUser, feedbinPassword)
 }
 
-func createPinboardClient() *pinboard.Client {
-	key := utils.ReadEnv("PINBOARD_API_KEY")
-	client, err := pinboard.Connect(key)
+func createRaindropClient() *raindrop.Client {
+	key := utils.ReadEnv("RAINDROP_API_KEY")
+	client, err := raindrop.Connect(key)
 	if err != nil {
 		log.Fatal(err)
 	}
