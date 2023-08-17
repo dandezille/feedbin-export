@@ -37,6 +37,15 @@ func Connect(user string, password string) Client {
 	return c
 }
 
+func Batch(entries []int, batchSize int) [][]int {
+	batches := make([][]int, 0, (len(entries)+batchSize-1)/batchSize)
+	for batchSize < len(entries) {
+		entries, batches = entries[batchSize:], append(batches, entries[0:batchSize:batchSize])
+	}
+
+	return append(batches, entries)
+}
+
 func (c *Client) GetStarredEntries() ([]FeedEntry, error) {
 	starred, err := c.getStarredEntries()
 	if err != nil {
@@ -47,7 +56,18 @@ func (c *Client) GetStarredEntries() ([]FeedEntry, error) {
 		return nil, nil
 	}
 
-	return c.getEntries(starred)
+	batches := Batch(starred, 100)
+
+	entries := make([]FeedEntry, 0, len(starred))
+	for _, batch := range batches {
+		batchEntries, err := c.getEntries(batch)
+		if err != nil {
+			return nil, err
+		}
+		entries = append(entries, batchEntries...)
+	}
+
+	return entries, nil
 }
 
 func (c *Client) Unstar(entries []FeedEntry) error {
